@@ -33,6 +33,7 @@
 						:id = 'item.id'
 						@scrollTo = 'scrollToItem'
 						@deleteItem = 'deleteItem'
+						@doneItem = 'doneItem'
 						>	
 						</li>
 					</ul>
@@ -78,7 +79,6 @@
 		},
 		props:{
 			myMap: Object
-
 		},
 		methods:{
 			deleteItem(id){
@@ -102,6 +102,27 @@
 						break;
 					}
 			},
+			doneItem(id){
+				let self = this;
+				for (let i in this.todoItems)
+					if (this.todoItems[i].id == id){
+						var item = this.todoItems[i];
+						console.log(item)
+						$.ajax({
+							url: 'https://memap.ddns.net/api/notes/' + id + '?' + $.param({token:self.token, header: item.header,date: item.date, lattitude: item.lattitude, longitude: item.longitude, description: item.description, is_archived: true}),
+							method: 'PUT',
+							success(item){
+									console.log(item);
+									self.todoItems.splice(i, 1);
+							},
+							error(err){
+									console.log('ошибка при выполнении заметки');
+							}
+						});
+						break;
+					}
+			},
+
 			choosePlace(){
 				let map = document.getElementById('my-map');
 				let self = this;
@@ -145,10 +166,7 @@
 				        });
 
   			 		};
-
 					self.myMap.events.add('click', self.callback);
-
-  			 	//console.log(self.callback);
 				});
 			},
 			scrollToItem(id){
@@ -233,10 +251,8 @@
 			}
 		},
 		created(){
-			//this.checkTodoItems();
 			this.token = localStorage.getItem('token');
 			let t = this.token;
-			//console.log(this.myMap)
 			if (this.token){
 				this.buttonDisabled = false;
 				$.ajax({
@@ -245,10 +261,8 @@
 		          
 		          success: (data) => {
 		          	console.log(data)
-		          	for (let note in data.notes){
-
+		          	for (let note in data.notes)
 		          		this.todoItems.push(data.notes[note]);
-		          	}
 		          },
 		          error: function(msg){
 		            console.log(msg);
@@ -256,19 +270,15 @@
         		});
 			}
 		},
-		mounted: function(){
-
-		},
 		components:{
 			'todo-item': todoItem,
-			//'todo-add': todoAdd,
 			datePicker
 		}
 	}
 </script>
 
 
-<style >
+<style>
 #todo-list{	
 	padding-left: 0px;
 	margin-top: 5px;

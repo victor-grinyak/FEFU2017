@@ -4,10 +4,12 @@
 		<div class = 'control'>
 			
 			<div v-if='visible' class = 'btn-group todoControl btn-group-xs'>
-				<button type="button" class="btn btn-default">
+				<button type="button" class="btn btn-default"
+					@click = 'doneItem'>
 					<span class = 'glyphicon glyphicon-ok'></span>
 				</button>
-	   			<button type="button" class="btn btn-default">
+	   			<button type="button" class="btn btn-default"
+	   				@click = 'edit = !edit'>
 	   				<span class = 'glyphicon glyphicon-pencil'></span>
 	   			</button>
 	  			<button type="button" class="btn btn-default"
@@ -17,15 +19,22 @@
 			</div>
 		</div>
 		
-		<p>
-			<span class = "glyphicon glyphicon-tags"></span>
-			{{title}}
-		</p>
+		<div>
+			<p v-if='!edit'>
+				<span class = "glyphicon glyphicon-tags"></span>
+				{{' ' + title}}
+			</p>
+			<input v-else type="text" class = "form-control">
 
-		<p>
-			<span class="glyphicon glyphicon-calendar"></span>
-			Дата и время: {{formattedDate}}
-		</p>
+		</div>
+
+		<div>
+			<p v-if = '!edit'>
+				<span class="glyphicon glyphicon-calendar"></span>
+				Дата и время: {{formattedDate}}
+			</p>
+			<input v-else type="text" class = "form-control">
+		</div>
 
 		<p>
 			<span class = "glyphicon glyphicon-home"></span>
@@ -71,13 +80,18 @@
 				isDescrLong: false,
 				showFullDescr: false,
 				showSpoiler: false,
-				pm:''
+				pm:'',
+				edit: false
 			}
 		},
 		methods:{
 			deleteItem(){
 				this.myMap.geoObjects.remove(this.pm);
 				this.$emit('deleteItem', this.id);
+			},
+			doneItem(){
+				this.myMap.geoObjects.remove(this.pm);
+				this.$emit('doneItem', this.id);
 			},
 			viewMarker(){
 				let self = this;
