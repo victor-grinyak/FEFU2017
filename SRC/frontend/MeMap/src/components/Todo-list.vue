@@ -10,7 +10,7 @@
 
 			       			<input id = "comment" class = "form-control" type="textaria" name="title" v-model = 'commentary' placeholder="Описание" maxlength = "5000">
 							
-			       			<div class="input-group" style="{margin-bottom= 3px}">
+			       			<div class="input-group" style="{margin-bottom: 3px}">
 			       				<input id='createAdress' class = 'form-control' type="textaria" name="adress" placeholder="Выберите адрес на карте" style = "margin-bottom: 3px" :value='adress' readonly='true'>
 							    <span class="input-group-btn">
 							        <button class="btn btn-secondary" type="button" @click = 'choosePlace'>Выбрать</button>
@@ -26,10 +26,9 @@
 						:title = 'item.header' 
 						:pos = '[item.lattitude, item.longitude]' 
 						:adress = 'item.location_str'
-						:time = 'item.date' 
+						:time = 'item.date'
 						:description = 'item.description'
 						:myMap = 'myMap'
-
 						:id = 'item.id'
 						@scrollTo = 'scrollToItem'
 						@deleteItem = 'deleteItem'
@@ -73,10 +72,11 @@
 		    	commentary: "",
 		    	token: "",
 		    	buttonDisabled: true,
-		    	callback:{},
-		    	myPlacemark:''
+		    	callback: {},
+		    	myPlacemark: ''
 			}
 		},
+
 		props:{
 			myMap: Object
 		},
@@ -107,12 +107,10 @@
 				for (let i in this.todoItems)
 					if (this.todoItems[i].id == id){
 						var item = this.todoItems[i];
-						console.log(item)
 						$.ajax({
 							url: 'https://memap.ddns.net/api/notes/' + id + '?' + $.param({token:self.token, header: item.header,date: item.date, lattitude: item.lattitude, longitude: item.longitude, description: item.description, is_archived: true}),
 							method: 'PUT',
 							success(item){
-									console.log(item);
 									self.todoItems.splice(i, 1);
 							},
 							error(err){
@@ -129,14 +127,12 @@
 				ymaps.ready(function(){
 					
 					self.callback = function (e) {
-						self.myPlacemark;
 				        var coords = e.get('coords');
 				        self.location = coords;
 				        // Если метка уже создана – просто передвигаем ее.
 				        if (self.myPlacemark) {
 				            self.myPlacemark.geometry.setCoordinates(coords);
 				        }
-				        // Если нет – создаем.
 				        else {
 				            self.myPlacemark = new ymaps.Placemark(coords);
 				            self.myMap.geoObjects.add(self.myPlacemark);
@@ -172,7 +168,6 @@
 			scrollToItem(id){
 				//let container = document.getElementById('list');
 				let el = document.getElementById('id' + id);
-				console.log(el)
 
 				var cancelScroll = this.$scrollTo(el, 200, {
 				    container: '#list',
@@ -201,17 +196,11 @@
 					let item = {};
 					
 					item.header = document.getElementById('createTitle').value;
-					item.time = document.getElementById('datepicker').value;
+					item.time = new Date(document.getElementById('datepicker').value).getTime();
 					item.description = document.getElementById('comment').value;
-					console.log(item.description)
 					item.pos = this.location;
-
-					console.log(item)
 					if (this.validate(item)){
 						let self = this;
-						item.time = parseInt(new Date().getTime() / 1000, 10);
-						console.log(item.time)
-
 						$.ajax({
 							url: 'https://memap.ddns.net/api/notes?' + $.param({token:self.token, header: item.header,date: item.time, lattitude: item.pos[0], longitude: item.pos[1], description: item.description, is_archived: false}),
 							method: 'POST',
@@ -260,7 +249,6 @@
 		          method: 'GET',
 		          
 		          success: (data) => {
-		          	console.log(data)
 		          	for (let note in data.notes)
 		          		this.todoItems.push(data.notes[note]);
 		          },
