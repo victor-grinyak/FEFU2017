@@ -239,11 +239,11 @@
                             }
                         });
                     }
-                    document.getElementById('createForm').reset();
-
+//                    document.getElementById('createTitle').value = '';
                     this.viewMenu = !this.viewMenu;
                     this.myMap.events.remove('click', this.callback);
                     this.myMap.geoObjects.remove(this.myPlacemark);
+                    location.reload();
                 }
                 else {
                     this.viewMenu = !this.viewMenu;
